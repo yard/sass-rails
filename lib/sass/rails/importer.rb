@@ -54,7 +54,7 @@ module Sprockets
         end
       end
       return nil if contents.empty?
-      Sass::Engine.new(contents, options.merge(
+      SassC::Engine.new(contents, options.merge(
         :filename => base_pathname.to_s,
         :importer => self,
         :syntax => :scss
@@ -67,7 +67,7 @@ module Sprockets
         full_filename, syntax = Sass::Util.destructure(find_real_file(dir, name, options))
         return unless full_filename && File.readable?(full_filename)
 
-        engine = Sass::Engine.new(evaluate(full_filename), options.merge(
+        engine = SassC::Engine.new(evaluate(full_filename), options.merge(
           syntax: syntax,
           filename: full_filename,
           importer: self
