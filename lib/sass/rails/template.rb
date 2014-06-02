@@ -10,8 +10,8 @@ module Sprockets
         :filename => eval_file,
         :line => line,
         :syntax => syntax,
-        :cache_store => cache_store,
-        :importer => SassImporter.new(context, context.pathname),
+        #:cache_store => cache_store,
+        #:importer => SassImporter.new(context, context.pathname),
         :load_paths => context.environment.paths.map { |path| SassImporter.new(context, path) },
         :sprockets => {
           :context => context,
