@@ -50,14 +50,16 @@ module Sprockets
       @@cache ||= {}
 
       @@cache[ path ] ||= begin
-        paths = if path.end_with?("*")
+        if path.end_with?("*")
           resolve_wildcard_import context, path, cwd
         else
           resolve_specific_import context, path, cwd
         end
       end
 
-      paths = @@cache[ path ]
+      @@cache[ path ].each do |path|
+        context.depend_on(path)
+      end
     end
 
   protected
