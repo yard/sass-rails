@@ -22,9 +22,14 @@ module Sprockets
       sass_config = context.environment.context_class.sass_config.merge(options)
 
       engine = ::SassC::Engine.new(data, sass_config)
+      
       engine.custom_function(:resolve_imports) do |args|
         cwd, path = args[0], args[1]
         resolve_imports(context: context, cwd: cwd, path: path)
+      end
+
+      engine.custom_function(:"asset_path($path)") do |args|
+        context.asset_path(args.first.gsub("\"", ""))
       end
 
       engine.render
