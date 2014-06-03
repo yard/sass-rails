@@ -28,8 +28,11 @@ module Sprockets
         resolve_imports(context: context, cwd: cwd, path: path)
       end
 
-      engine.custom_function(:"asset_path($path)") do |args|
-        context.asset_path(args.first.gsub("\"", ""))
+      %w(asset-path asset-url image-path image-url video-path video-url audio-path audio-url font-path font-url javascript-path javascript-url stylesheet-path stylesheet-url).each do |name|
+        engine.custom_function("#{ name }($arg)") do |args|
+          result = context.send(name.gsub("-", "_"), args.first.gsub("\"", "").gsub("'", ""))
+          name.include?("-url") ? "url('#{result}')" : result
+        end
       end
 
       engine.render
