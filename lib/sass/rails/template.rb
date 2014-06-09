@@ -1,4 +1,5 @@
 require "sprockets/sass_template"
+require "base64"
 
 module Sprockets
   class SassTemplate
@@ -30,15 +31,31 @@ module Sprockets
 
       %w(asset-path asset-url image-path image-url video-path video-url audio-path audio-url font-path font-url javascript-path javascript-url stylesheet-path stylesheet-url).each do |name|
         engine.custom_function("#{ name }($arg)") do |args|
-          result = context.send(name.gsub("-", "_"), args.first.gsub("\"", "").gsub("'", ""))
+          result = context.send(name.gsub("-", "_"), unqoute_argument(args.first))
           name.include?("-url") ? "url('#{result}')" : result
         end
+      end
+
+      engine.custom_function("base64-encode($arg)") do |args|
+        arg = unqoute_argument(args.first)
+        Base64.encode64(arg).gsub(/[\r\n]/, "")
       end
 
       engine.render
     rescue ::Sass::SyntaxError => e
       context.__LINE__ = e.sass_backtrace.first[:line]
       raise e
+    end
+
+    #  Unqoutes the argument.
+    #
+    def unqoute_argument(arg)
+      if arg.size > 0
+        arg = arg[1..-1]  if (arg.first == "\"") || (arg.first == "\'") 
+        arg = arg[0...-1] if (arg.last == "\"")  || (arg.last == "\'") 
+      end
+
+      arg
     end
 
     #  Resolves the import string taking into account current working directory.
