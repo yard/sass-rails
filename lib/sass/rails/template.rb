@@ -41,6 +41,10 @@ module Sprockets
         Base64.encode64(arg).gsub(/[\r\n]/, "")
       end
 
+      engine.custom_function("twbs-font-path($arg)") do |arg|
+        context.font_path(unqoute_argument(args.first))
+      end
+
       engine.render
     rescue ::Sass::SyntaxError => e
       context.__LINE__ = e.sass_backtrace.first[:line]
